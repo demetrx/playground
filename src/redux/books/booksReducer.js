@@ -1,23 +1,45 @@
-import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { fetchBooks } from './booksOperations';
 
-const entities = createReducer([], {
-  [fetchBooks.fulfilled]: (_, action) => action.payload,
+const booksSlice = createSlice({
+  name: 'books',
+  initialState: { entities: [], isLoading: false, error: null },
+  extraReducers: {
+    [fetchBooks.fulfilled]: (state, action) => {
+      state.entities = action.payload;
+      state.isLoading = false;
+    },
+    [fetchBooks.pending]: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [fetchBooks.rejected]: (state, action) => {
+      state.error = action.payload;
+      state.isLoading = false;
+    },
+  },
 });
 
-const isLoading = createReducer(false, {
-  [fetchBooks.pending]: () => true,
-  [fetchBooks.fulfilled]: () => false,
-  [fetchBooks.rejected]: () => false,
-});
+export default booksSlice.reducer;
 
-const error = createReducer(null, {
-  [fetchBooks.rejected]: (_, action) => action.payload,
-  [fetchBooks.pending]: () => null,
-});
+// import { createReducer, combineReducers } from '@reduxjs/toolkit';
+// const entities = createReducer([], {
+//   [fetchBooks.fulfilled]: (_, action) => action.payload,
+// });
 
-export default combineReducers({
-  entities,
-  isLoading,
-  error,
-});
+// const isLoading = createReducer(false, {
+//   [fetchBooks.pending]: () => true,
+//   [fetchBooks.fulfilled]: () => false,
+//   [fetchBooks.rejected]: () => false,
+// });
+
+// const error = createReducer(null, {
+//   [fetchBooks.rejected]: (_, action) => action.payload,
+//   [fetchBooks.pending]: () => null,
+// });
+
+// export default combineReducers({
+//   entities,
+//   isLoading,
+//   error,
+// });
